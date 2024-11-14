@@ -1,0 +1,12 @@
+{
+  "networks": {
+    "localhost": {
+      "votingContract": "0x...",
+      "deployedAt": "timestamp"
+    },
+    "holesky": {
+      "votingContract": "0x...",
+      "deployedAt": "timestamp"
+    }
+  }
+} 
