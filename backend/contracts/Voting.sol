@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 /// @author Alexandre Kermarec
 /// @notice This contract manages a complete voting workflow with registration, proposals, and voting phases
 /// @dev Inherits from OpenZeppelin's Ownable contract for admin functionality
+/// @dev DOS attack prevention: Limited to 1000 total proposals and 3 proposals per address
 contract Voting is Ownable {
 
     /// @notice ID of the winning proposal
@@ -117,6 +118,7 @@ contract Voting is Ownable {
     /// @notice Adds a new proposal
     /// @param _desc Description of the proposal
     /// @dev Only registered voters can add proposals during the ProposalsRegistrationStarted phase
+    /// @dev DOS protection: Limits total proposals to 1000 and 3 proposals per voter
     function addProposal(string calldata _desc) external onlyVoters {
         require(proposalsArray.length < 1000, "Maximum number of proposals reached");
         require(voters[msg.sender].nbProposals < 3, "Maximum number of 3 proposals per user reached");
