@@ -207,7 +207,7 @@ const VotePage = () => {
                                         >
                                             <div className="flex justify-between items-center">
                                                 <span className="font-medium">#{index + 1}</span>
-                                                <span className={`text-sm ${Number(proposal.voteCount) > 0 ? 'text-green-400 font-medium' : 'text-muted-foreground'}`}>
+                                                <span className={`text-sm ${Number(proposal.voteCount) > 0 ? 'text-lime-500 font-medium' : 'text-muted-foreground'}`}>
                                                     {proposal.voteCount.toString()} votes
                                                 </span>
                                             </div>

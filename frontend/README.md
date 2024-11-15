@@ -15,7 +15,6 @@ A decentralized voting application built with Next.js, Wagmi, and Solidity. Depl
 
 - **Frontend**:
   - Next.js 14 (App Router)
-  - TypeScript
   - Wagmi/Viem for blockchain interactions
   - TailwindCSS & shadcn/ui for design
   - RainbowKit for wallet management
@@ -29,7 +28,7 @@ A decentralized voting application built with Next.js, Wagmi, and Solidity. Depl
 
 - Frontend: [Vercel](https://your-app-url.vercel.app)
 - Smart Contract: Holesky Network
-  - Contract Address: `0x...`
+  - Contract Address: `0x9c8ebb31d1E095Bb0d95B6c3f6E930E4AE115Db9`
 
 ## 🏁 Getting Started
 

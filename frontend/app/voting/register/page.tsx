@@ -155,15 +155,21 @@ const RegisterPage = () => {
             if (!publicClient) return;
             
             try {
+                // Récupérer le bloc actuel
+                const currentBlock = await publicClient.getBlockNumber();
+                
+                // Calculer le bloc de départ (50000 blocs en arrière maximum)
+                const fromBlock = currentBlock - 50000n > 0n ? currentBlock - 50000n : 0n;
+
                 const logs = await publicClient.getLogs({
                     address: contractAddress,
                     event: parseAbiItem('event VoterRegistered(address voterAddress)'),
-                    fromBlock: BigInt(0),
-                    toBlock: 'latest'
+                    fromBlock,
+                    toBlock: currentBlock
                 });
 
-                const voters = logs.map(log => log.args.voterAddress as string);
-                setRegisteredVoters(prev => [...new Set([...prev, ...voters])]);
+                const uniqueAddresses = new Set(logs.map(log => log.args.voterAddress));
+                setRegisteredVoters(Array.from(uniqueAddresses));
                 setIsLoading(false);
             } catch (error) {
                 console.error('Error fetching past events:', error);

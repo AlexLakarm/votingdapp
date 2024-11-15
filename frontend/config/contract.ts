@@ -1,5 +1,5 @@
 // Adresse du contrat déployé sur localhost
-export const contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3' as const;
+export const contractAddress = '0x9c8ebb31d1E095Bb0d95B6c3f6E930E4AE115Db9' as const;
 
 // ABI du contrat
 export const contractABI = [
