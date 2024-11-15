@@ -1,31 +1,42 @@
+"use client";
 import CustomRainbowKitProvider from "./customRainbowKit";
-import { Inter, Quicksand } from "next/font/google";
+import { Inter, Quicksand, Poppins } from "next/font/google";
 import "./globals.css";
-import type { Metadata } from "next";
 import Header from "@/components/shared/header";
 import Footer from "@/components/shared/footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { useEffect, useState } from 'react';
 
 const inter = Inter({ subsets: ["latin"] });
 const quicksand = Quicksand({ 
   subsets: ["latin"],
   weight: ['300', '400', '500', '600', '700']
 });
-
-export const metadata: Metadata = {
-  title: "Voting session",
-  description: "Welcome to your voting dapp",
-};
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-poppins'
+});
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
-    <html lang="en" suppressHydrationWarning className="h-full">
-      <body className={`${inter.className} flex flex-col min-h-screen`}>
+    <html lang="en" className="h-full">
+      <body className={`${inter.className} ${poppins.variable} flex flex-col min-h-screen`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

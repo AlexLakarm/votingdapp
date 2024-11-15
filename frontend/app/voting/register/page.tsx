@@ -155,10 +155,7 @@ const RegisterPage = () => {
             if (!publicClient) return;
             
             try {
-                // Récupérer le bloc actuel
                 const currentBlock = await publicClient.getBlockNumber();
-                
-                // Calculer le bloc de départ (50000 blocs en arrière maximum)
                 const fromBlock = currentBlock - 50000n > 0n ? currentBlock - 50000n : 0n;
 
                 const logs = await publicClient.getLogs({
@@ -168,7 +165,12 @@ const RegisterPage = () => {
                     toBlock: currentBlock
                 });
 
-                const uniqueAddresses = new Set(logs.map(log => log.args.voterAddress));
+                const uniqueAddresses = new Set(
+                    logs.map(log => log.args.voterAddress).filter((addr): addr is `0x${string}` => 
+                        addr !== undefined && typeof addr === 'string' && addr.startsWith('0x')
+                    )
+                );
+                
                 setRegisteredVoters(Array.from(uniqueAddresses));
                 setIsLoading(false);
             } catch (error) {

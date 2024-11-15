@@ -138,7 +138,6 @@ const VotingApp = () => {
         abi: contractABI,
         functionName: 'getOneProposal',
         args: [winningProposalId ? BigInt(winningProposalId.toString()) : 0n],
-        enabled: Boolean(winningProposalId),
     });
 
     const statusCards = [

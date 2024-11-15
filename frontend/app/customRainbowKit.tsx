@@ -1,44 +1,49 @@
 'use client'
-import React from 'react';
+import { getDefaultWallets, RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import '@rainbow-me/rainbowkit/styles.css';
-import {
-  getDefaultConfig,
-  RainbowKitProvider,
-  darkTheme,
-} from '@rainbow-me/rainbowkit';
-import { WagmiProvider } from 'wagmi';
-import {
-  holesky,
-  hardhat
-} from 'wagmi/chains';
-import {
-  QueryClientProvider,
-  QueryClient,
-} from "@tanstack/react-query";
+import { createConfig, WagmiConfig } from 'wagmi';
+import { http } from 'viem';
+import { Chain } from 'viem';
 
-type CustomRainbowKitProviderProps = {
-  children: React.ReactNode;
+const holeskyChain: Chain = {
+  id: 17000,
+  name: 'Holesky',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Ethereum',
+    symbol: 'ETH',
+  },
+  rpcUrls: {
+    default: { http: ['https://ethereum-holesky-rpc.publicnode.com'] },
+  },
+  blockExplorers: {
+    default: { name: 'Etherscan', url: 'https://holesky.etherscan.io' },
+  },
+  testnet: true,
 };
 
-const config = getDefaultConfig({
-    appName: 'Voting DApp',
-    projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || 'eaf1ccd83974e4ff1615b137976bd7f8',
-    chains: [holesky, hardhat],
-    ssr: true, 
+const { wallets } = getDefaultWallets({
+  appName: 'Voting DApp',
+  projectId: 'YOUR_PROJECT_ID',
 });
 
-const queryClient = new QueryClient();
+const config = createConfig({
+  chains: [holeskyChain],
+  transports: {
+    [holeskyChain.id]: http(),
+  },
+});
 
-const CustomRainbowKitProvider = ({ children }: CustomRainbowKitProviderProps) => {
+export default function CustomRainbowKitProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider locale="en-US" theme={darkTheme()}>
-          {children}
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
-  )
+    <WagmiConfig config={config}>
+      <RainbowKitProvider theme={darkTheme()}>
+        {children}
+      </RainbowKitProvider>
+    </WagmiConfig>
+  );
 }
-
-export default CustomRainbowKitProvider;
