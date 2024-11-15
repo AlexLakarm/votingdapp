@@ -166,12 +166,12 @@ const RegisterPage = () => {
                 });
 
                 const uniqueAddresses = new Set(
-                    logs.map(log => log.args.voterAddress).filter((addr): addr is `0x${string}` => 
-                        addr !== undefined && typeof addr === 'string' && addr.startsWith('0x')
-                    )
+                    logs
+                        .map(log => log.args.voterAddress)
+                        .filter((address): address is `0x${string}` => address !== undefined)
                 );
                 
-                setRegisteredVoters(Array.from(uniqueAddresses));
+                setRegisteredVoters(Array.from(uniqueAddresses) as string[]);
                 setIsLoading(false);
             } catch (error) {
                 console.error('Error fetching past events:', error);
@@ -192,6 +192,13 @@ const RegisterPage = () => {
             setRegisteredVoters(prev => [...new Set([...prev, ...newVoters])]);
         },
     });
+
+    useEffect(() => {
+        if (hasCopied) {
+            const timer = setTimeout(() => setHasCopied(false), 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [hasCopied]);
 
     if (!isConnected) {
         return (

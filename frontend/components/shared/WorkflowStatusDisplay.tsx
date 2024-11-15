@@ -1,8 +1,7 @@
 "use client";
-import { useReadContract } from 'wagmi';
-import { contractAddress, contractABI } from '@/config/contract';
-import { Alert, AlertTitle } from "@/components/ui/alert";
+
 import { Info } from "lucide-react";
+import { Alert, AlertTitle } from "@/components/ui/alert";
 
 enum WorkflowStatus {
     RegisteringVoters,

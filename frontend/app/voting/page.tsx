@@ -7,14 +7,14 @@ import { parseAbiItem } from 'viem';
 import AdminPanel from '@/components/shared/AdminPanel';
 import WorkflowStatusDisplay from '@/components/shared/WorkflowStatusDisplay';
 import StatusCard from '@/components/shared/StatusCard';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState} from 'react';
 
 const VotingApp = () => {
     const { address, isConnected } = useAccount();
     const publicClient = usePublicClient();
     const [registeredVotersCount, setRegisteredVotersCount] = useState(0);
     const [proposalsCount, setProposalsCount] = useState<number>(0);
-    const [userVote, setUserVote] = useState<string | null>(null);
+
     const [userVoteInfo, setUserVoteInfo] = useState<{ hasVoted: boolean, votedProposalId: number | null }>({
         hasVoted: false,
         votedProposalId: null

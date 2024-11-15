@@ -1,12 +1,12 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ArrowLeft, Send, AlertTriangle, Loader2, Copy, Check } from "lucide-react";
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, usePublicClient, useWatchContractEvent } from 'wagmi';
+import { ArrowLeft, Send, AlertTriangle, Loader2 } from "lucide-react";
+import { useAccount, useReadContract, useWriteContract, usePublicClient, useWatchContractEvent } from 'wagmi';
 import { contractAddress, contractABI } from '@/config/contract';
 import { useToast } from "@/hooks/use-toast";
 import { useTransactionToast } from "@/hooks/use-transaction-toast";
@@ -17,12 +17,12 @@ interface Proposal {
 }
 
 const VotePage = () => {
-    const { address, isConnected } = useAccount();
+    const { address } = useAccount();
     const { toast } = useToast();
     const [proposals, setProposals] = useState<Proposal[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const publicClient = usePublicClient();
-    const [hasCopied, setHasCopied] = useState(false);
+
 
     const { writeContract, data: hash, error } = useWriteContract();
     const { isSuccess } = useTransactionToast(hash, error);
@@ -53,7 +53,7 @@ const VotePage = () => {
     });
 
     // Récupérer les propositions
-    const fetchProposals = async () => {
+    const fetchProposals = useCallback(async () => {
         if (!proposalsCount || !voterData?.isRegistered || !publicClient) return;
         
         try {
@@ -73,18 +73,13 @@ const VotePage = () => {
             console.error('Error fetching proposals:', error);
             setIsLoading(false);
         }
-    };
+    }, [publicClient, voterData?.isRegistered, proposalsCount]);
 
     // Charger les propositions au démarrage et après une transaction réussie
     useEffect(() => {
         fetchProposals();
-    }, [publicClient, voterData, isSuccess]);
+    }, [publicClient, voterData, isSuccess, fetchProposals]);
 
-    const copyToClipboard = async (text: string) => {
-        await navigator.clipboard.writeText(text);
-        setHasCopied(true);
-        setTimeout(() => setHasCopied(false), 2000);
-    };
 
     const handleVote = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();

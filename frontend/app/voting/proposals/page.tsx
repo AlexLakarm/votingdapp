@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Send, Loader2 } from "lucide-react";
 import { useAccount, useReadContract, useWriteContract, useWatchContractEvent, usePublicClient } from 'wagmi';
 import { contractAddress, contractABI } from '@/config/contract';
-import { useToast } from "@/hooks/use-toast";
 import { useTransactionToast } from "@/hooks/use-transaction-toast";
 
 interface Proposal {
@@ -16,8 +15,8 @@ interface Proposal {
 }
 
 const ProposalsPage = () => {
-    const { address, isConnected } = useAccount();
-    const { toast } = useToast();
+    const { address} = useAccount();
+
     const [proposals, setProposals] = useState<Proposal[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const publicClient = usePublicClient();
@@ -35,7 +34,7 @@ const ProposalsPage = () => {
     const { isSuccess } = useTransactionToast(hash, error);
 
     // Récupérer les propositions
-    const fetchProposals = async () => {
+    const fetchProposals = useCallback(async () => {
         if (!publicClient || !voterData?.isRegistered) return;
         
         try {
@@ -61,12 +60,12 @@ const ProposalsPage = () => {
             console.error('Error fetching proposals:', error);
             setIsLoading(false);
         }
-    };
+    }, [publicClient, voterData?.isRegistered]);
 
     // Charger les propositions au démarrage et après une transaction réussie
     useEffect(() => {
         fetchProposals();
-    }, [publicClient, voterData, isSuccess]);
+    }, [publicClient, voterData, isSuccess, fetchProposals]);
 
     // Écouter les nouveaux événements de proposition
     useWatchContractEvent({

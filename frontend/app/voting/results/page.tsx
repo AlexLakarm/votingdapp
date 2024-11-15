@@ -32,7 +32,7 @@ const ResultsPage = () => {
                 </Link>
             </div>
             <h1 className="text-2xl font-bold mb-6">Results</h1>
-            <Card className="bg-gradient-to-r from-violet-400 to-fuchsia-400 text-white shadow-xl">
+            <Card className="bg-gradient-to-r from-blue-800 to-fuchsia-00 text-white shadow-xl">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <div>
                         <CardTitle className="text-2xl font-bold">Winning Proposal</CardTitle>

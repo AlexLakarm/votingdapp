@@ -1,14 +1,14 @@
 "use client"
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { ModeToggle } from "../ui/mode-toggle";
-import { useToast } from "@/hooks/use-toast";
+
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 
 const Header = () => {
-    const { toast } = useToast();
+
     const pathname = usePathname();
 
     // Afficher le bouton uniquement sur les pages de vote

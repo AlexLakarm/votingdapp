@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { HoverCard, HoverCardTrigger } from "@/components/ui/hover-card";
 import { useWriteContract } from 'wagmi';
 import { contractAddress, contractABI } from '@/config/contract';
 import Link from "next/link";
@@ -97,18 +97,6 @@ const AdminPanel = ({ currentStatus }: AdminPanelProps) => {
             });
         } catch (error) {
             console.error('Error tallying votes:', error);
-        }
-    };
-
-    const handleWorkflowStatusChange = async (newStatus: number) => {
-        try {
-            await writeContract({
-                address: contractAddress,
-                abi: contractABI,
-                functionName: 'startProposalsRegistering',
-            });
-        } catch (error) {
-            console.error('Error changing workflow status:', error);
         }
     };
 
