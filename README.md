@@ -42,9 +42,7 @@ A complete decentralized voting application with a smart contract backend and a 
 
 ## 🚀 Live Demo
 
-Visit the live application: [Voting DApp on Vercel](https://your-app-url.vercel.app)
-
-Contract deployed on Holesky testnet: `0x...`
+See `/Overview` section.
 
 ## 🏁 Quick Start
 
