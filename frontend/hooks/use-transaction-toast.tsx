@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useToast } from "@/hooks/use-toast"
 import { useWaitForTransactionReceipt } from 'wagmi'
 import { TransactionToast } from "@/components/ui/transaction-toast"
@@ -13,7 +13,7 @@ export function useTransactionToast(
 ) {
     const { toast } = useToast()
     const [hasCopied, setHasCopied] = useState(false)
-    const [pendingToastId, setPendingToastId] = useState<string>()
+    const pendingToastRef = useRef<ReturnType<typeof toast>>()
 
     const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
         hash,
@@ -26,14 +26,10 @@ export function useTransactionToast(
     }
 
     useEffect(() => {
-        if (error) {
-            if (pendingToastId) {
-                toast({
-                    id: pendingToastId,
-                    duration: 0,
-                })
-            }
-            console.log('Transaction error:', error)
+        if (error && pendingToastRef.current) {
+            pendingToastRef.current.dismiss()
+            pendingToastRef.current = undefined
+            
             toast({
                 title: "Transaction Failed",
                 description: error.message || "Transaction failed. Please try again.",
@@ -41,7 +37,7 @@ export function useTransactionToast(
                 duration: 5000,
             })
         }
-    }, [error, toast, pendingToastId])
+    }, [error, toast])
 
     useEffect(() => {
         if (hash) {
@@ -58,8 +54,8 @@ export function useTransactionToast(
     }, [hash, toast, hasCopied])
 
     useEffect(() => {
-        if (isConfirming) {
-            const { id } = toast({
+        if (isConfirming && !pendingToastRef.current) {
+            pendingToastRef.current = toast({
                 title: "Transaction Pending",
                 description: (
                     <div className="flex items-center gap-2">
@@ -67,19 +63,17 @@ export function useTransactionToast(
                         <span>Waiting for confirmation...</span>
                     </div>
                 ),
+                variant: "loading",
                 duration: Infinity,
             })
-            setPendingToastId(id)
         }
     }, [isConfirming, toast])
 
     useEffect(() => {
         if (isSuccess && hash) {
-            if (pendingToastId) {
-                toast({
-                    id: pendingToastId,
-                    duration: 0,
-                })
+            if (pendingToastRef.current) {
+                pendingToastRef.current.dismiss()
+                pendingToastRef.current = undefined
             }
             
             toast({
@@ -95,7 +89,7 @@ export function useTransactionToast(
                 duration: 10000,
             })
         }
-    }, [isSuccess, hash, toast, hasCopied, pendingToastId])
+    }, [isSuccess, hash, toast, hasCopied])
 
     return { isConfirming, isSuccess }
 } 
