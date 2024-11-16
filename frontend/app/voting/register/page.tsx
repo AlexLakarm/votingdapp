@@ -7,10 +7,11 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle, UserPlus, Users, Loader2, Copy, Check } from "lucide-react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { useAccount, useReadContract, useWriteContract, useWatchContractEvent, usePublicClient, useWaitForTransactionReceipt } from 'wagmi';
+import { useAccount, useReadContract, useWriteContract, useWatchContractEvent, usePublicClient } from 'wagmi';
 import { parseAbiItem } from 'viem';
 import { contractAddress, contractABI } from '@/config/contract';
 import { useToast } from "@/hooks/use-toast";
+import { useTransactionToast } from "@/hooks/use-transaction-toast";
 
 const RegisterPage = () => {
     const { address, isConnected } = useAccount();
@@ -24,99 +25,14 @@ const RegisterPage = () => {
     const publicClient = usePublicClient();
     const [registeredVoters, setRegisteredVoters] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [hasCopied, setHasCopied] = useState(false);
+    // Utilisation du hook useTransactionToast
+    const { isSuccess } = useTransactionToast(hash, error);
 
     const isOwner = Boolean(
         address && 
         ownerAddress && 
         address.toLowerCase() === ownerAddress.toLowerCase()
     );
-
-    // Watch transaction confirmation
-    const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
-        hash,
-    });
-
-    // Effect pour le hash de transaction
-    useEffect(() => {
-        if (hash) {
-            console.log('Transaction hash received:', hash);
-            toast({
-                title: "Transaction Sent",
-                description: (
-                    <div className="mt-2 p-2 bg-slate-100 dark:bg-slate-800 rounded font-mono text-xs break-all">
-                        {hash}
-                    </div>
-                ),
-                duration: 10000, // 10 secondes pour avoir le temps de voir le hash
-            });
-        }
-    }, [hash, toast]);
-
-    // Effect pour la confirmation
-    useEffect(() => {
-        if (isConfirming) {
-            console.log('Transaction confirming...');
-            toast({
-                title: "Transaction Pending",
-                description: "Waiting for confirmation...",
-            });
-        }
-    }, [isConfirming, toast]);
-
-    const copyToClipboard = async (text: string) => {
-        await navigator.clipboard.writeText(text);
-        setHasCopied(true);
-        setTimeout(() => setHasCopied(false), 2000);
-    };
-
-    useEffect(() => {
-        if (isSuccess) {
-            console.log('Transaction successful!');
-            toast({
-                title: "Success",
-                description: (
-                    <div>
-                        <p>Voter has been registered successfully!</p>
-                        <div className="mt-2 p-2 bg-slate-100 dark:bg-slate-800 rounded font-mono text-xs break-all flex items-center justify-between">
-                            <span>{hash}</span>
-                            <button
-                                onClick={() => copyToClipboard(hash as string)}
-                                className="ml-2 p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded transition-colors"
-                            >
-                                {hasCopied ? (
-                                    <Check className="h-4 w-4 text-green-500" />
-                                ) : (
-                                    <Copy className="h-4 w-4" />
-                                )}
-                            </button>
-                        </div>
-                    </div>
-                ),
-                duration: 10000,
-            });
-        }
-    }, [isSuccess, hash, toast]);
-
-    useEffect(() => {
-        if (error) {
-            console.log('Transaction error:', error);
-            const errorMessage = error.message || error.toString();
-            if (errorMessage.includes('Already registered')) {
-                toast({
-                    title: "Registration Failed",
-                    description: "This address is already registered as a voter",
-                    variant: "destructive",
-                });
-            } else {
-                toast({
-                    title: "Error",
-                    description: errorMessage,
-                    variant: "destructive",
-                });
-            }
-        }
-    }, [error, toast]);
 
     const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -180,7 +96,7 @@ const RegisterPage = () => {
         };
 
         fetchPastEvents();
-    }, [publicClient]);
+    }, [publicClient, isSuccess]);
 
     // Écouter les nouveaux événements
     useWatchContractEvent({
@@ -192,13 +108,6 @@ const RegisterPage = () => {
             setRegisteredVoters(prev => [...new Set([...prev, ...newVoters])]);
         },
     });
-
-    useEffect(() => {
-        if (hasCopied) {
-            const timer = setTimeout(() => setHasCopied(false), 2000);
-            return () => clearTimeout(timer);
-        }
-    }, [hasCopied]);
 
     if (!isConnected) {
         return (

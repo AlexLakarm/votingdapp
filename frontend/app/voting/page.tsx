@@ -9,6 +9,8 @@ import WorkflowStatusDisplay from '@/components/shared/WorkflowStatusDisplay';
 import StatusCard from '@/components/shared/StatusCard';
 import { useEffect, useState} from 'react';
 
+const CONTRACT_DEPLOYMENT_BLOCK = 2743934n;
+
 const VotingApp = () => {
     const { address, isConnected } = useAccount();
     const publicClient = usePublicClient();
@@ -59,28 +61,22 @@ const VotingApp = () => {
 
     console.log('Is owner:', isOwner);
 
-    // Récupérer le nombre de votants enregistrés
+    // Remplacer l'effet existant par celui-ci
     useEffect(() => {
         const fetchVotersCount = async () => {
             if (!publicClient) return;
             
             try {
-                // Récupérer le bloc actuel
-                const currentBlock = await publicClient.getBlockNumber();
-                // Calculer le bloc de départ (par exemple, 1000 blocs en arrière)
-                const fromBlock = currentBlock - BigInt(1000) > 0n ? currentBlock - BigInt(1000) : 0n;
-
                 const logs = await publicClient.getLogs({
                     address: contractAddress,
                     event: parseAbiItem('event VoterRegistered(address voterAddress)'),
-                    fromBlock: fromBlock,
+                    fromBlock: CONTRACT_DEPLOYMENT_BLOCK,
                     toBlock: 'latest'
                 });
 
                 setRegisteredVotersCount(logs.length);
             } catch (error) {
                 console.error('Error fetching voters count:', error);
-                // En cas d'erreur, on met une valeur par défaut
                 setRegisteredVotersCount(0);
             }
         };
