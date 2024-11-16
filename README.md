@@ -7,6 +7,7 @@ A complete decentralized voting application with a smart contract backend and a 
 - Demo Video Link : https://www.loom.com/share/44ebf1f955f3411287d3764de970feaa?sid=2acd31ae-fa75-4bdc-be16-66537cc8fa12
 - App deployed on Vercel : https://votingdapp-one.vercel.app/
 - Smart Contract Adress : 0x9c8ebb31d1E095Bb0d95B6c3f6E930E4AE115Db9
+(https://holesky.etherscan.io/address/0x9c8ebb31d1E095Bb0d95B6c3f6E930E4AE115Db9)
 - Network : Holesky (testnet)
 
 ## 🏗 Project Structure
@@ -42,7 +43,7 @@ A complete decentralized voting application with a smart contract backend and a 
 
 ## 🚀 Live Demo
 
-See `/Overview` section.
+See [Overview](#overview)
 
 ## 🏁 Quick Start
 
@@ -87,3 +88,7 @@ npm run dev
 ## 📄 License
 
 This project is licensed under the MIT License. 
+
+## Liens utiles
+- [Contrat sur Holesky Etherscan](https://holesky.etherscan.io/address/0x9c8ebb31d1E095Bb0d95B6c3f6E930E4AE115Db9)
+- Block de déploiement : 2743934
